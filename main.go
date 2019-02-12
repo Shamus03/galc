@@ -17,6 +17,8 @@ var (
 )
 
 func main() {
+	stk.Push(0)
+
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
@@ -67,6 +69,8 @@ loop:
 				a := stk.Pop()
 				stk.Push(math.Pow(a, b))
 			}
+		case termbox.EventError:
+			panic(ev.Err)
 		}
 		draw()
 	}
@@ -74,13 +78,19 @@ loop:
 
 func draw() {
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+	prefix := "> "
 	var i int
 	stk.Walk(func(v float64) {
-		drawString(0, i, fmt.Sprintf("%f", v))
+		drawString(len(prefix), i, fmt.Sprintf("%f", v))
 		i++
 	})
-	drawString(0, stk.Len(), buf)
-	termbox.SetCursor(len(buf), stk.Len())
+	drawString(len(prefix), stk.Len(), buf)
+	arrowHeight := stk.Len() - 1
+	if len(buf) > 0 {
+		arrowHeight++
+	}
+	drawString(0, arrowHeight, prefix)
+	termbox.SetCursor(len(buf)+len(prefix), stk.Len())
 	termbox.Flush()
 }
 
