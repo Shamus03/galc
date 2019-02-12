@@ -1,10 +1,10 @@
-# galk
+# galc
 Simple terminal-driven RPN calculator
 
 ## Installation
 
 ```
-$ go get github.com/Shamus03/galk
+$ go get github.com/Shamus03/galc
 $ galk
 ```
 
