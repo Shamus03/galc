@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math"
 	"strconv"
@@ -17,6 +18,9 @@ var (
 )
 
 func main() {
+	debugKeys := flag.Bool("debug", false, "debug keypresses")
+	flag.Parse()
+
 	stk.Push(0)
 
 	err := termbox.Init()
@@ -39,6 +43,13 @@ loop:
 			case ev.Key == termbox.KeyBackspace:
 				if len(buf) > 0 {
 					buf = buf[:len(buf)-1]
+				}
+			case ev.Key == termbox.KeyBackspace2:
+				// Ctrl+Backspace
+				if buf == "" {
+					stk.Pop()
+				} else {
+					buf = ""
 				}
 			case '0' <= ev.Ch && ev.Ch <= '9':
 				buf += string(ev.Ch)
@@ -68,6 +79,10 @@ loop:
 				b := bufferOrPop()
 				a := stk.Pop()
 				stk.Push(math.Pow(a, b))
+			default:
+				if *debugKeys {
+					buf = fmt.Sprintf("%#v", ev)
+				}
 			}
 		case termbox.EventError:
 			panic(ev.Err)
