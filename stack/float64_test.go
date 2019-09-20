@@ -41,3 +41,18 @@ func Test_Stack_Walk(t *testing.T) {
 
 	assert.Equal(t, []float64{1, 3, 2}, vals)
 }
+
+func Test_Stack_RotateUnrotate(t *testing.T) {
+	var s stack.Float64Stack
+	s.Push(1)
+	s.Push(2)
+	s.Push(3)
+
+	s.Rotate()
+	assert.Equal(t, 1.0, s.Peek())
+
+	s.Unrotate()
+	assert.Equal(t, 3.0, s.Peek())
+
+	assert.Equal(t, 3, s.Len())
+}

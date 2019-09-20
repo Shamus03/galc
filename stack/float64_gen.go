@@ -46,3 +46,27 @@ func (s *Float64Stack) Walk(f func(float64)) {
 		f(v)
 	}
 }
+
+// Rotate the stack (move the top value to the bottom of the stack)
+func (s *Float64Stack) Rotate() {
+	if len(s.stack) == 0 {
+		return
+	}
+
+	i := 0
+	v := s.stack[i]
+
+	s.stack = append(s.stack[i+1:], v)
+}
+
+// Unrotate the stack (move the bottom value to the top of the stack)
+func (s *Float64Stack) Unrotate() {
+	if len(s.stack) == 0 {
+		return
+	}
+
+	i := len(s.stack) - 1
+	v := s.stack[i]
+
+	s.stack = append([]float64{v}, s.stack[:i]...)
+}

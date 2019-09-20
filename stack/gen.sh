@@ -58,6 +58,30 @@ func (s *${struct_name}) Walk(f func(${type_name})) {
 		f(v)
 	}
 }
+
+// Rotate the stack (move the top value to the bottom of the stack)
+func (s *${struct_name}) Rotate() {
+	if len(s.stack) == 0 {
+		return
+	}
+
+	i := 0
+	v := s.stack[i]
+
+	s.stack = append(s.stack[i+1:], v)
+}
+
+// Unrotate the stack (move the bottom value to the top of the stack)
+func (s *${struct_name}) Unrotate() {
+	if len(s.stack) == 0 {
+		return
+	}
+
+	i := len(s.stack) - 1
+	v := s.stack[i]
+
+	s.stack = append([]${type_name}{v}, s.stack[:i]...)
+}
 EOF
 
 exit 0
