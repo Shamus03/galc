@@ -37,9 +37,7 @@ loop:
 			case ev.Key == termbox.KeyCtrlC:
 				break loop
 			case ev.Key == termbox.KeyEnter:
-				val, _ := strconv.ParseFloat(buf, 64)
-				stk.Push(val)
-				buf = ""
+				pushBuffer()
 			case ev.Key == termbox.KeyBackspace:
 				if len(buf) > 0 {
 					buf = buf[:len(buf)-1]
@@ -58,35 +56,42 @@ loop:
 					buf += "."
 				}
 			case ev.Ch == '+':
-				b := bufferOrPop()
+				pushBuffer()
+				b := stk.Pop()
 				a := stk.Pop()
 				stk.Push(a + b)
 			case ev.Ch == '-':
-				b := bufferOrPop()
+				pushBuffer()
+				b := stk.Pop()
 				a := stk.Pop()
 				stk.Push(a - b)
 			case ev.Ch == '*':
-				b := bufferOrPop()
+				pushBuffer()
+				b := stk.Pop()
 				a := stk.Pop()
 				stk.Push(a * b)
 			case ev.Ch == '/':
-				b := bufferOrPop()
+				pushBuffer()
+				b := stk.Pop()
 				a := stk.Pop()
 				stk.Push(a / b)
 			case ev.Ch == '%':
-				stk.Push(math.Sqrt(bufferOrPop()))
+				pushBuffer()
+				stk.Push(math.Sqrt(stk.Pop()))
 			case ev.Ch == '^':
-				b := bufferOrPop()
+				pushBuffer()
+				b := stk.Pop()
 				a := stk.Pop()
 				stk.Push(math.Pow(a, b))
 			case ev.Ch == '[':
-				stk.Push(bufferOrPop())
+				pushBuffer()
 				stk.Rotate()
 			case ev.Ch == ']':
-				stk.Push(bufferOrPop())
+				pushBuffer()
 				stk.Unrotate()
 			case ev.Ch == '\\':
-				a := bufferOrPop()
+				pushBuffer()
+				a := stk.Pop()
 				b := stk.Pop()
 				stk.Push(a)
 				stk.Push(b)
@@ -126,11 +131,10 @@ func drawString(x, y int, str string) {
 	}
 }
 
-func bufferOrPop() float64 {
+func pushBuffer() {
 	if len(buf) > 0 {
 		val, _ := strconv.ParseFloat(buf, 64)
 		buf = ""
-		return val
+		stk.Push(val)
 	}
-	return stk.Pop()
 }
