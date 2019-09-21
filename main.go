@@ -80,9 +80,16 @@ loop:
 				a := stk.Pop()
 				stk.Push(math.Pow(a, b))
 			case ev.Ch == '[':
+				stk.Push(bufferOrPop())
 				stk.Rotate()
 			case ev.Ch == ']':
+				stk.Push(bufferOrPop())
 				stk.Unrotate()
+			case ev.Ch == '\\':
+				a := bufferOrPop()
+				b := stk.Pop()
+				stk.Push(a)
+				stk.Push(b)
 			default:
 				if *debugKeys {
 					buf = fmt.Sprintf("%#v", ev)
