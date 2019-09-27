@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/atotto/clipboard"
+
 	"github.com/shamus03/galc/stack"
 
 	termbox "github.com/nsf/termbox-go"
@@ -95,6 +97,15 @@ loop:
 				b := stk.Pop()
 				stk.Push(a)
 				stk.Push(b)
+			case ev.Ch == 'c':
+				pushBuffer()
+				clipboard.WriteAll(fmt.Sprintf("%f", stk.Peek()))
+			case ev.Ch == 'v':
+				clip, _ := clipboard.ReadAll()
+				if _, err := strconv.ParseFloat(clip, 64); err == nil {
+					pushBuffer()
+					buf = clip
+				}
 			default:
 				if *debugKeys {
 					buf = fmt.Sprintf("%#v", ev)
