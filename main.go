@@ -33,6 +33,7 @@ func main() {
 
 loop:
 	for {
+		draw()
 		switch ev := termbox.PollEvent(); ev.Type {
 		case termbox.EventKey:
 			switch {
@@ -116,7 +117,6 @@ loop:
 		case termbox.EventError:
 			panic(ev.Err)
 		}
-		draw()
 	}
 }
 
