@@ -109,9 +109,17 @@ loop:
 				clipboard.WriteAll(fmt.Sprintf("%f", v))
 			case ev.Ch == 'v':
 				clip, _ := clipboard.ReadAll()
-				if _, err := strconv.ParseFloat(clip, 64); err == nil {
-					pushBuffer()
-					buf = clip
+				lines := strings.Split(strings.NewReplacer(
+					"\r", "\n",
+					", ", "\n",
+					"\t", "\n",
+				).Replace(clip), "\n")
+				for _, line := range lines {
+					line := strings.TrimSpace(line)
+					if _, err := strconv.ParseFloat(line, 64); err == nil {
+						pushBuffer()
+						buf = line
+					}
 				}
 			default:
 				if *debugKeys {
@@ -125,27 +133,29 @@ loop:
 }
 
 func draw() {
+	t := termboxTranslate{}
+	_, height := termbox.Size()
+	// need a little bit of padding for the cursor
+	height--
+	if stk.Len() > height {
+		t.y = height - stk.Len()
+	}
+
 	termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
 	prefix := "> "
 	var i int
 	stk.Walk(func(v float64) {
-		drawString(len(prefix), i, fmt.Sprintf("%f", v))
+		t.DrawString(len(prefix), i, fmt.Sprintf("%f", v))
 		i++
 	})
-	drawString(len(prefix), stk.Len(), buf)
+	t.DrawString(len(prefix), stk.Len(), buf)
 	arrowHeight := stk.Len() - 1
 	if len(buf) > 0 {
 		arrowHeight++
 	}
-	drawString(0, arrowHeight, prefix)
-	termbox.SetCursor(len(buf)+len(prefix), stk.Len())
+	t.DrawString(0, arrowHeight, prefix)
+	t.SetCursor(len(buf)+len(prefix), stk.Len())
 	termbox.Flush()
-}
-
-func drawString(x, y int, str string) {
-	for i, ch := range str {
-		termbox.SetCell(x+i, y, ch, termbox.ColorWhite, termbox.ColorDefault)
-	}
 }
 
 func pushBuffer() {
