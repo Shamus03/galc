@@ -63,6 +63,10 @@ loop:
 				b, _ := stk.Pop()
 				a, _ := stk.Pop()
 				stk.Push(a + b)
+			case ev.Ch == '_':
+				pushBuffer()
+				a, _ := stk.Pop()
+				stk.Push(-a)
 			case ev.Ch == '-':
 				pushBuffer()
 				b, _ := stk.Pop()
